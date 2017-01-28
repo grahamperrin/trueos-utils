@@ -1,6 +1,7 @@
 #!/bin/sh
 
-########## Memory related info ##################################
+# memory-related
+
 VM_PAGESIZE=`sysctl -n vm.stats.vm.v_page_size`
 FREE_MEM=$((`sysctl -n vm.stats.vm.v_free_count` * $VM_PAGESIZE))
 INACT_MEM=$((`sysctl -n vm.stats.vm.v_inactive_count` * $VM_PAGESIZE))
@@ -9,8 +10,9 @@ INACT_MEM=$((`sysctl -n vm.stats.vm.v_inactive_count` * $VM_PAGESIZE))
 AVAIL_MEMORY=$((`sysctl -n hw.realmem` /1024/1024))
 FREE_MEMORY=$((($FREE_MEM + $INACT_MEM) /1024 /1024))
 
-#############3 System type TrueOS #################3
-# Special function for checking TrueOS version
+# system type TrueOS 
+# special function for checking the version
+
 display_trueos_version()
 {
 if [ -e "/etc/defaults/trueos-desktop" ] ; then
@@ -26,7 +28,8 @@ else
 fi
 }
 
-# Check TrueOS type again for other functions
+# check TrueOS type again for other functions
+
 if [ -e "/etc/defaults/trueos-desktop" ] ; then
   SYSTYPE="DESKTOP"
 else
@@ -35,31 +38,24 @@ fi
 
 EFICHECK=`dmesg | grep "(efifb)" | awk '{print $1}' | cut -d '(' -f 2 | cut -d ')' -f 1`
 
-# Check to see if BIOS/EFI is used as the bootloader type
+# check whether the type of the boot loader is BIOS or EFI
+
 if [ $EFICHECK = "efifb" ] ; then
     export LOADERTYPE=EFI
   else
     export LOADERTYPE=BIOS
 fi
 
-# Check to see if Grub is used as the bootloader
+# check whether GRUB is used
+
 if [ -f /etc/grub/grub.cfg ] ; then
     export BOOTLOADER=GRUB
   else
     export BOOTLOADER=BSD
 fi
 
-display_trueos_banner()
-{
-echo "  ______                   ____  _____"
-echo " /_  __/______  _____     / __ \/ ___/ "
-echo "  / / / ___/ / / / _ \   / / / /\__ \ "
-echo " / / / /  / /_/ /  __/  / /_/ /___/ / "
-echo "/_/ /_/   \__,_/\___/   \____//____/  "
-echo ""                                   
-}
+# display the version of pkg(8)
 
-# Display pkg info for Desktop
 display_pkg_version()
 {
   VER=`pkg query %v $2`
@@ -69,9 +65,7 @@ display_pkg_version()
   fi
 }
 
-# Display pkg_info
-
-display_trueos_banner 
+# display general information
 
 show_general()
 {
@@ -79,6 +73,7 @@ echo ""
 echo "==================="
 echo "General information"
 echo "==================="
+echo ""
 echo "boot loader ………………………………… `echo $BOOTLOADER`"
 echo "            type …………………… `echo $LOADERTYPE`"
 echo "CPU ……………………………………………………… `sysctl -n hw.model`"
@@ -107,6 +102,8 @@ if [ "$SYSTYPE" = "DESKTOP" ] ; then
   echo ""
 fi
 }
+
+# display networking information
 
 show_network()
 {
@@ -147,25 +144,44 @@ ifconfig | grep "inet6" |  awk '{ print "    "$2 }'
 echo ""
 }
 
-show_usage()
+# banner
+# hung beneath (it's attractive, but space-consuming)
+
+show_trueos_banner()
 {
-echo "-n show network information"
-echo "-v show all information"
+echo "   ______                   ____  _____"
+echo "  /_  __/______  _____     / __ \/ ___/"
+echo "   / / / ___/ / / / _ \   / / / /\__ \ "
+echo "  / / / /  / /_/ /  __/  / /_/ /___/ / "
+echo " /_/ /_/   \__,_/\___/   \____//____/  "
+echo ""
+echo "                https://www.trueos.org/"
+echo ""
 }
 
-# Check for arguments
+show_usage()
+{
+echo "-n show network information only"
+echo "-v show general and network information"
+}
+
+# check for arguments
+
 if [ -z $1 ] ; then
-  show_general
-  exit 0
+	show_general
+	show_trueos_banner
+	exit 0
 fi
 
 case $1 in
         -n)
 	show_network
+	show_trueos_banner
         ;;
 	-v)
 	show_general
 	show_network
+	show_trueos_banner
 	;;
         *)
 	show_usage
