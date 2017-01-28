@@ -36,7 +36,7 @@ fi
 EFICHECK=`dmesg | grep "(efifb)" | awk '{print $1}' | cut -d '(' -f 2 | cut -d ')' -f 1`
 
 # Check to see if BIOS/EFI is used as the bootloader type
-if [ $EFICHECK = "efifb"  ] ; then
+if [ $EFICHECK = "efifb" ] ; then
     export LOADERTYPE=EFI
   else
     export LOADERTYPE=BIOS
@@ -75,55 +75,63 @@ display_trueos_banner
 
 show_general()
 {
-echo "General information:"
-echo " "
-echo "    boot loader ………………………………… `echo $BOOTLOADER`"
-echo "                type …………………… `echo $LOADERTYPE`"
-echo "    CPU ……………………………………………………… `sysctl -n hw.model`"
-echo "        number of cores …………… `sysctl -n kern.smp.cpus`"
-echo "    host …………………………………………………… `hostname`"
-echo "    memory ……………………………………………… ${AVAIL_MEMORY} MB available, ${FREE_MEMORY} MB free"
-echo "    OS git branch …………………………………………………………………………………… `uname -a | awk '{print $7}' | cut -d '(' -f 2 | cut -d ')' -f1`"
-echo "    OS git revision ……………………………………………………………………………… `uname -a | awk '{print $7}' | cut -d '(' -f 1`"
-echo "    OS kernel ident ………………………………………………… (uname -i) `uname -i`"
-echo "    OS platform (architecture) …………………… (uname -m) `uname -m`"
-echo "    OS release level ……………………………………………… (uname -r) `uname -r`"
-echo "    OS version and patch level … (freebsd-version) `freebsd-version`"
-echo "    TrueOS package set ……………… `cat /usr/local/etc/trueos.conf 2>/dev/null | grep '^[[:space:]]*PACKAGE_SET: ' | sed 's|[[:space:]]*PACKAGE_SET: ||g'`"
-echo "    TrueOS version ………………………… `display_trueos_version`"
-echo "    uptime ……………………………………………… `uptime | awk '{sub(/^.* up +/,"");sub(/, *[0-9]+ users.*/,"");print}'`"
-echo "    user  ………………………………………………… `whoami`"
+echo ""
+echo "==================="
+echo "General information"
+echo "==================="
+echo "boot loader ………………………………… `echo $BOOTLOADER`"
+echo "            type …………………… `echo $LOADERTYPE`"
+echo "CPU ……………………………………………………… `sysctl -n hw.model`"
+echo "    number of cores …………… `sysctl -n kern.smp.cpus`"
+echo "host …………………………………………………… `hostname`"
+echo "memory ……………………………………………… ${AVAIL_MEMORY} MB available, ${FREE_MEMORY} MB free"
+echo "OS git branch …………………………………………………………………………………… `uname -a | awk '{print $7}' | cut -d '(' -f 2 | cut -d ')' -f1`"
+echo "OS git revision ……………………………………………………………………………… `uname -a | awk '{print $7}' | cut -d '(' -f 1`"
+echo "OS kernel identity ………………………………………… (uname -i) `uname -i`"
+echo "OS platform (architecture) …………………… (uname -m) `uname -m`"
+echo "OS release level ……………………………………………… (uname -r) `uname -r`"
+echo "OS version and patch level … (freebsd-version) `freebsd-version`"
+echo "TrueOS package set ……………… `cat /usr/local/etc/trueos.conf 2>/dev/null | grep '^[[:space:]]*PACKAGE_SET: ' | sed 's|[[:space:]]*PACKAGE_SET: ||g'`"
+echo "TrueOS version ………………………… `display_trueos_version`"
+echo "uptime ……………………………………………… `uptime | awk '{sub(/^.* up +/,"");sub(/, *[0-9]+ users.*/,"");print}'`"
+echo "user  ………………………………………………… `whoami`"
 
-if [ "$SYSTYPE" = "DESKTOP" ]; then 
-  echo " "
-  echo "Additional information:"
-  echo " "
+if [ "$SYSTYPE" = "DESKTOP" ] ; then 
+  echo ""
+  echo "More (TrueOS Desktop):"
+  echo ""
   echo "    desktop environment …………… `sed -n 2p /var/db/pcdm/lastlogin`"
   echo "    Open Sound System (OSS) … `cat /dev/sndstat | grep default`"
   echo "    wireless driver ……………………… `sysctl -b net.wlan.devices`"
   echo "    X11 driver …………………………………… `awk '{if (sub(/^.*Loading.*modules\/drivers\//,"")) { printf "%s ",$0 } }END{print "";}'  < /var/log/Xorg.0.log`"
+  echo ""
 fi
 }
 
 show_network()
 {
 echo ""
+echo "=========="
 echo "Networking"
 echo "=========="
 echo ""
-echo "Default routing table: "
+echo "Default routing table"
+echo "---------------------"
 echo ""
 route show default
 echo ""
-echo "Routing table in numeric format:"
+echo "Routing table in numeric format"
+echo "-------------------------------"
 echo ""
 netstat -arn
 echo ""
-echo "Interface information, condensed:"
+echo "Interface information, condensed"
+echo "--------------------------------"
 echo ""
 ifconfig | grep -v ether | grep -v bssid
 echo ""
-echo "DNS-related: "
+echo "DNS-related"
+echo "-----------"
 echo ""
 drill
 echo ""
@@ -136,6 +144,7 @@ echo ""
 echo "IPv6 key points (not interface-specific): "
 echo ""
 ifconfig | grep "inet6" |  awk '{ print "    "$2 }'
+echo ""
 }
 
 show_usage()
