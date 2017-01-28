@@ -82,7 +82,7 @@ echo "                type …………………… `echo $LOADERTYPE`"
 echo "    CPU ……………………………………………………… `sysctl -n hw.model`"
 echo "        number of cores …………… `sysctl -n kern.smp.cpus`"
 echo "    host …………………………………………………… `hostname`"
-echo "    memory ……………………………………………… ${AVAIL_MEMORY} Mb available, ${FREE_MEMORY} Mb free"
+echo "    memory ……………………………………………… ${AVAIL_MEMORY} MB available, ${FREE_MEMORY} MB free"
 echo "    OS git branch …………………………………………………………………………………… `uname -a | awk '{print $7}' | cut -d '(' -f 2 | cut -d ')' -f1`"
 echo "    OS git revision ……………………………………………………………………………… `uname -a | awk '{print $7}' | cut -d '(' -f 1`"
 echo "    OS kernel ident ………………………………………………… (uname -i) `uname -i`"
@@ -108,11 +108,32 @@ fi
 show_network()
 {
 echo ""
-echo "IPv4 networking: "
+echo "Networking"
+echo "=========="
+echo ""
+echo "Default routing table: "
+echo ""
+route show default
+echo ""
+echo "Routing table in numeric format:"
+echo ""
+netstat -arn
+echo ""
+echo "Interface information, condensed:"
+echo ""
+ifconfig | grep -v ether | grep -v bssid
+echo ""
+echo "DNS-related: "
+echo ""
+drill
+echo ""
+echo "----"
+echo ""
+echo "IPv4 key points (not interface specific): "
 echo ""
 ifconfig | grep "inet " |  awk '{ print "    "$2 }'
 echo ""
-echo "IPv6 networking: "
+echo "IPv6 key points (not interface-specific): "
 echo ""
 ifconfig | grep "inet6" |  awk '{ print "    "$2 }'
 }
